@@ -22,4 +22,9 @@ public class AdminRestController {
     public AdminCreateResponse create(@Valid @RequestBody AdminCreate adminCreate) {
         return adminService.create(adminCreate);
     }
+
+    @PostMapping("/logins/admins")
+    public AdminLoginResponse login(@RequestBody AdminLogin adminLogin) {
+        return adminService.login(adminLogin);
+    }
 }

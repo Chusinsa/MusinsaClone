@@ -38,4 +38,16 @@ public class AdminService {
 
         return new AdminCreateResponse(admin.getId(), admin.getCreatedAt());
     }
+
+    public AdminLoginResponse login(AdminLogin dto) {
+        Admin admin = adminRepository.findByLoginId(dto.loginId()).orElseThrow(() ->
+                new NoSuchElementException("회원정보가 없습니다."));
+
+        admin.EqualsPassword(dto.password());
+
+        return new AdminLoginResponse(
+                admin.getId(),
+                admin.getLoginId(),
+                jwtProvider.createToken(dto.loginId()));
+    }
 }
