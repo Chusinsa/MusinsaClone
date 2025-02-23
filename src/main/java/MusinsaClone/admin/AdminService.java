@@ -1,11 +1,9 @@
 package MusinsaClone.admin;
 
-import MusinsaClone.admin.DTO.AdminCreate;
-import MusinsaClone.admin.DTO.AdminCreateResponse;
-import MusinsaClone.admin.DTO.AdminLogin;
-import MusinsaClone.admin.DTO.AdminLoginResponse;
+import MusinsaClone.admin.DTO.*;
 import MusinsaClone.util.JwtProvider;
 import MusinsaClone.util.SecurityUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -49,5 +47,11 @@ public class AdminService {
                 admin.getId(),
                 admin.getLoginId(),
                 jwtProvider.createToken(dto.loginId()));
+    }
+
+    @Transactional
+    public void adminWithdraw(Admin admin, AdminWithdrawDTO dto) {
+        admin.EqualsPassword(dto.password());
+        adminRepository.delete(admin);
     }
 }
