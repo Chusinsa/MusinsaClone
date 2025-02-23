@@ -56,7 +56,7 @@ public class Admin extends BaseEntity {
 
     public void EqualsPassword(String password) {
         String hashPassword = SecurityUtils.sha256EncryptHex2(password);
-        if (!this.password.equals(hashPassword)) {
+        if (!this.getPassword().equals(hashPassword)) {
             throw new NoSuchElementException("비밀번호가 다릅니다.");
         }
     }
