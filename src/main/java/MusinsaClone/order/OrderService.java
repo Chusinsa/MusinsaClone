@@ -1,8 +1,11 @@
 package MusinsaClone.order;
 
 import MusinsaClone.order.DTO.CreateOrderRequest;
+import MusinsaClone.order.DTO.OrderListResponse;
 import MusinsaClone.order.DTO.OrderResponse;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -26,5 +29,12 @@ public class OrderService {
         );
     }
 
-    public
+    public OrderListResponse getAll() {
+        List<Order> orders = orderRepository.findAll();
+        return new OrderListResponse(
+                orders.stream()
+                        .map(order -> new OrderListResponse.OrderInfo(order.getId(), order.getCustomer().getName))
+                        .toList()
+        );
+    }
 }

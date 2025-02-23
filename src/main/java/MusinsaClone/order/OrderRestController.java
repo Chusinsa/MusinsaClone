@@ -1,6 +1,7 @@
 package MusinsaClone.order;
 
 import MusinsaClone.order.DTO.CreateOrderRequest;
+import MusinsaClone.order.DTO.OrderListResponse;
 import MusinsaClone.order.DTO.OrderResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,5 +17,9 @@ public class OrderRestController {
 
     public OrderResponse create(@RequestBody CreateOrderRequest createOrderRequest) {
         return orderService.create(createOrderRequest);
+    }
+
+    public OrderListResponse getAll() {
+        return orderService.getAll();
     }
 }
