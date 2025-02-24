@@ -1,8 +1,7 @@
 package MusinsaClone.order;
 
-import MusinsaClone.customers.Customers;
 import MusinsaClone.order.DTO.CreateOrderRequest;
-import MusinsaClone.order.DTO.OrderDetailResponse;
+import MusinsaClone.order.DTO.OrderViewResponse;
 import MusinsaClone.order.DTO.OrderListResponse;
 import MusinsaClone.order.DTO.OrderResponse;
 import org.springframework.stereotype.Service;
@@ -40,10 +39,10 @@ public class OrderService {
         );
     }
 
-    public OrderDetailResponse getDetail(Long orderId) {
+    public OrderViewResponse getDetail(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new NoSuchElementException("해당하는 주문이 없습니다."));
-        return new OrderDetailResponse(
+        return new OrderViewResponse(
                 order.getId(),
                 order.getCustomer().getId,
                 order.getAddress(),

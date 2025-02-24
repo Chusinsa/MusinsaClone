@@ -1,8 +1,8 @@
 package MusinsaClone.order.DTO;
 
-public record OrderDetailResponse(
+public record OrderViewResponse(
         Long orderId,
-        Long UserId,
+        Long customerId,
         String address,
         int totalPrice
 ) {

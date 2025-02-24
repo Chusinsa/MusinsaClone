@@ -1,7 +1,7 @@
 package MusinsaClone.order;
 
 import MusinsaClone.order.DTO.CreateOrderRequest;
-import MusinsaClone.order.DTO.OrderDetailResponse;
+import MusinsaClone.order.DTO.OrderViewResponse;
 import MusinsaClone.order.DTO.OrderListResponse;
 import MusinsaClone.order.DTO.OrderResponse;
 import MusinsaClone.util.LoginMemberResolver;
@@ -23,7 +23,7 @@ public class OrderRestController {
     public OrderResponse create(@RequestBody CreateOrderRequest createOrderRequest,
                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Customer customer = loginMemberResolver.resolveCustomerFromToken(token);
-        return orderService.create(customer, createOrderRequest);
+        return orderService.create(createOrderRequest, customer);
     }
 
     @GetMapping("/orders")
@@ -33,8 +33,8 @@ public class OrderRestController {
     }
 
     @GetMapping("/orders/{orderId}")
-    public OrderDetailResponse getDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                         @PathVariable Long orderId) {
+    public OrderViewResponse getDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                       @PathVariable Long orderId) {
         Customer customer = loginMemberResolver.resolveCustomerFromToken(token);
         return orderService.getDetail(orderId);
     }
