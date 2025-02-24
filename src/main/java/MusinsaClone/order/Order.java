@@ -22,6 +22,9 @@ public class Order extends BaseEntity {
         this.address = address;
     }
 
+    protected Order() {
+    }
+
     public Long getId() {
         return id;
     }
