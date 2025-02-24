@@ -1,6 +1,6 @@
 package MusinsaClone.customers;
 
-public record CustomersRequest(
+public record CustomerRequest(
         String username,
         String password,
         String nickname,

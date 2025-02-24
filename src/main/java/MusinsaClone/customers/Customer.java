@@ -7,7 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @Entity
-public class Customers {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +30,10 @@ public class Customers {
     @LastModifiedDate
     LocalDateTime updatedAt;
 
-    public Customers() {
+    public Customer() {
     }
 
-    public Customers(String username, String password, String nickname, String email, String phone, String birthdate, String address) {
+    public Customer(String username, String password, String nickname, String email, String phone, String birthdate, String address) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;

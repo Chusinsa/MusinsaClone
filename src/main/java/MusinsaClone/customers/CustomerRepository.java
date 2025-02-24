@@ -2,5 +2,5 @@ package MusinsaClone.customers;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomersRepository extends JpaRepository<Customers,Long> {
+public interface CustomerRepository extends JpaRepository<Customer,Long> {
 }

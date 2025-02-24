@@ -6,24 +6,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CustomersController {
-    public final CustomersService customersService;
+public class CustomerController {
+    public final CustomerService customerService;
 
-    public CustomersController(CustomersService customersService) {
-        this.customersService = customersService;
+    public CustomerController(CustomerService customersService) {
+        this.customerService = customersService;
     }
 
     //회원가입(POST/customers/signup)/RequestBody@valid(요청데이터 자동검증)
     @PostMapping("/customers/signup")
-    public void create(@Valid @RequestBody CustomersRequest request) {
-        customersService.save(request);
+    public void create(@Valid @RequestBody CustomerRequest request) {
+        customerService.save(request);
     }
 
 
     //로그인(POST/login/customers)/RequestBody
-    @PostMapping("")
-    public CustomersResponse login(@Valid@RequestBody CustomersRequest request){
-        return customersService.login(request);
+    @PostMapping("/login/customers")
+    public CustomerResponse login(@Valid@RequestBody CustomerRequest request){
+        return customerService.login(request);
     }
 
 

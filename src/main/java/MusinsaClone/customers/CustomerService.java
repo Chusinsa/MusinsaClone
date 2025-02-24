@@ -4,16 +4,16 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomersService {
-    public final CustomersRepository customersRepository;
+public class CustomerService {
+    public final CustomerRepository customerRepository;
 
-    public CustomersService(CustomersRepository customersRepository) {
-        this.customersRepository = customersRepository;
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
     //회원가입
-    public void save(@Valid CustomersRequest request) {
-        customersRepository.save(new Customers(
+    public void save(@Valid CustomerRequest request) {
+        customerRepository.save(new Customer(
                 request.username(),
                 request.password(),
                 request.nickname(),
@@ -25,7 +25,7 @@ public class CustomersService {
     }
 
     //로그인
-    public CustomersResponse login(@Valid CustomersRequest request) {
+    public CustomerResponse login(@Valid CustomerRequest request) {
         return null;
     }
 
