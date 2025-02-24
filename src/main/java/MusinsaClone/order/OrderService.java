@@ -6,6 +6,7 @@ import MusinsaClone.order.DTO.OrderResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class OrderService {
@@ -18,8 +19,7 @@ public class OrderService {
         this.customerRepository = customerRepository;
     }
 
-    public OrderResponse create(CreateOrderRequest createOrderRequest) {
-        Customer customer = customerRepository.findById(createOrderRequest.customerId());
+    public OrderResponse create(CreateOrderRequest createOrderRequest, Customer customer) {
         Order order = new Order(customer, createOrderRequest.address());
         orderRepository.save(order);
         return new OrderResponse(
@@ -29,8 +29,8 @@ public class OrderService {
         );
     }
 
-    public OrderListResponse getAll() {
-        List<Order> orders = orderRepository.findAll();
+    public OrderListResponse getAll(Customer customer) {
+        List<Order> orders = orderRepository.findByCustomer(customer);
         return new OrderListResponse(
                 orders.stream()
                         .map(order -> new OrderListResponse.OrderInfo(order.getId(), order.getCustomer().getName))
