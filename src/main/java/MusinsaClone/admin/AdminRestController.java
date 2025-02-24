@@ -29,8 +29,20 @@ public class AdminRestController {
     }
 
     @DeleteMapping("/admins")
-    public void adminWithdraw(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@Valid @RequestBody AdminWithdrawDTO adminWithdraw) {
+    public void adminWithdraw(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminWithdrawDTO adminWithdraw) {
         Admin admin = loginMemberResolver.resolveUserFromToken(token);
         adminService.adminWithdraw(admin, adminWithdraw);
+    }
+
+    @PutMapping("/admins/my")
+    public AdminUpdateResponse adminUpdate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminUpdate adminUpdate) {
+        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        return adminService.adminUpdate(admin, adminUpdate);
+    }
+
+    @PutMapping("/admins/password")
+    public void passwordUpdate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminPasswordUpdate password) {
+        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        adminService.passwordUpdate(admin, password);
     }
 }

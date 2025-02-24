@@ -49,9 +49,25 @@ public class AdminService {
                 jwtProvider.createToken(dto.loginId()));
     }
 
-    @Transactional
+    @Transactional // 회원 탈퇴
     public void adminWithdraw(Admin admin, AdminWithdrawDTO dto) {
         admin.EqualsPassword(dto.password());
         adminRepository.delete(admin);
+    }
+
+    @Transactional // 정보 수정
+    public AdminUpdateResponse adminUpdate(Admin admin, AdminUpdate dto) {
+        admin.updateNickNameAndPhoneNumber(dto.nickName(), dto.phoneNumber());
+        adminRepository.save(admin);
+        return new AdminUpdateResponse(
+                admin.getId(),
+                admin.getNickName(),
+                admin.getPhoneNumber(),
+                admin.getCreatedAt());
+    }
+
+    @Transactional
+    public void passwordUpdate(Admin admin, AdminPasswordUpdate dto) {
+        admin.passwordUpdate(dto.password());
     }
 }
