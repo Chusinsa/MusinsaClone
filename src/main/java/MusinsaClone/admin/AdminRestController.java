@@ -39,4 +39,10 @@ public class AdminRestController {
         Admin admin = loginMemberResolver.resolveUserFromToken(token);
         return adminService.adminUpdate(admin, adminUpdate);
     }
+
+    @PutMapping("/admins/password")
+    public void passwordUpdate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminPasswordUpdate password) {
+        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        adminService.passwordUpdate(admin, password);
+    }
 }

@@ -55,7 +55,7 @@ public class AdminService {
         adminRepository.delete(admin);
     }
 
-    @Transactional
+    @Transactional // 정보 수정
     public AdminUpdateResponse adminUpdate(Admin admin, AdminUpdate dto) {
         admin.updateNickNameAndPhoneNumber(dto.nickName(), dto.phoneNumber());
         adminRepository.save(admin);
@@ -64,5 +64,10 @@ public class AdminService {
                 admin.getNickName(),
                 admin.getPhoneNumber(),
                 admin.getCreatedAt());
+    }
+
+    @Transactional
+    public void passwordUpdate(Admin admin, AdminPasswordUpdate dto) {
+        admin.passwordUpdate(dto.password());
     }
 }

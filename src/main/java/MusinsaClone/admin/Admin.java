@@ -74,4 +74,11 @@ public class Admin extends BaseEntity {
         }
     }
 
+    public void passwordUpdate(String password) {
+        String hashPassword = SecurityUtils.sha256EncryptHex2(password);
+        if (this.getPassword().equals(hashPassword)) {
+            throw new IllegalArgumentException("똑같은 비밀번호 입니다.");
+        }
+        this.password = hashPassword;
+    }
 }
