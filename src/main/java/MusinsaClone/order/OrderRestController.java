@@ -1,13 +1,12 @@
 package MusinsaClone.order;
 
 import MusinsaClone.order.DTO.CreateOrderRequest;
+import MusinsaClone.order.DTO.OrderDetailResponse;
 import MusinsaClone.order.DTO.OrderListResponse;
 import MusinsaClone.order.DTO.OrderResponse;
 import MusinsaClone.util.LoginMemberResolver;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class OrderRestController {
@@ -20,14 +19,23 @@ public class OrderRestController {
         this.loginMemberResolver = loginMemberResolver;
     }
 
+    @PostMapping("/orders")
     public OrderResponse create(@RequestBody CreateOrderRequest createOrderRequest,
                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Customer customer = loginMemberResolver.resolveCustomerFromToken(token);
         return orderService.create(customer, createOrderRequest);
     }
 
+    @GetMapping("/orders")
     public OrderListResponse getAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         Customer customer = loginMemberResolver.resolveCustomerFromToken(token);
         return orderService.getAll(customer);
+    }
+
+    @GetMapping("/orders/{orderId}")
+    public OrderDetailResponse getDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                         @PathVariable Long orderId) {
+        Customer customer = loginMemberResolver.resolveCustomerFromToken(token);
+        return orderService.getDetail(orderId);
     }
 }
