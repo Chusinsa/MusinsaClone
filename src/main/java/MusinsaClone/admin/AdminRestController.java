@@ -1,6 +1,7 @@
 package MusinsaClone.admin;
 
 import MusinsaClone.admin.DTO.*;
+import MusinsaClone.util.ApiResponse;
 import MusinsaClone.util.LoginAdminResolver;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -28,9 +29,10 @@ public class AdminRestController {
     }
 
     @DeleteMapping("/admins")
-    public void adminWithdraw(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminWithdrawDTO adminWithdraw) {
+    public ApiResponse<Void> adminWithdraw(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminWithdrawDTO adminWithdraw) {
         Admin admin = loginAdminResolver.resolveAdminFromToken(token);
         adminService.adminWithdraw(admin, adminWithdraw);
+        return ApiResponse.success(null);
     }
 
     @PutMapping("/admins/my")
@@ -40,8 +42,9 @@ public class AdminRestController {
     }
 
     @PutMapping("/admins/password")
-    public void passwordUpdate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminPasswordUpdate password) {
+    public ApiResponse<Void> passwordUpdate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody AdminPasswordUpdate password) {
         Admin admin = loginAdminResolver.resolveAdminFromToken(token);
         adminService.passwordUpdate(admin, password);
+        return ApiResponse.success(null);
     }
 }
