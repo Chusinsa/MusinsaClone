@@ -1,6 +1,7 @@
 package MusinsaClone.orderDetail;
 
 import MusinsaClone.order.DTO.CreateOrderRequest;
+import MusinsaClone.orderDetail.DTO.CreateOrderDetailRequest;
 import MusinsaClone.orderDetail.DTO.CreateOrderDetailResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class OrderDetailRestController {
     }
 
     @PostMapping("/orderdetails")
-    public CreateOrderDetailResponse create(@RequestBody CreateOrderRequest createOrderRequest) {
-        return orderDetailService.create(createOrderRequest);
+    public CreateOrderDetailResponse create(@RequestBody CreateOrderDetailRequest createOrderDetailRequest) {
+        return orderDetailService.create(createOrderDetailRequest);
     }
 }
