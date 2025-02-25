@@ -1,5 +1,7 @@
 package MusinsaClone.order;
 
+import MusinsaClone.customers.Customer;
+import MusinsaClone.customers.CustomerRepository;
 import MusinsaClone.order.DTO.CreateOrderRequest;
 import MusinsaClone.order.DTO.OrderViewResponse;
 import MusinsaClone.order.DTO.OrderListResponse;

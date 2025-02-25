@@ -5,19 +5,19 @@ import MusinsaClone.admin.AdminService;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LoginMemberResolver {
+public class LoginAdminResolver {
     private static final String BEARER_PREFIX = "Bearer ";
     public static final String INVALID_TOKEN_MESSAGE = "로그인 정보가 유효하지 않습니다";
 
     private final JwtProvider jwtProvider;
     private final AdminService adminService;
 
-    public LoginMemberResolver(JwtProvider jwtProvider, AdminService adminService) {
+    public LoginAdminResolver(JwtProvider jwtProvider, AdminService adminService) {
         this.jwtProvider = jwtProvider;
         this.adminService = adminService;
     }
 
-    public Admin resolveUserFromToken(String bearerToken) {
+    public Admin resolveAdminFromToken(String bearerToken) {
         String token = extractToken(bearerToken);
         if (!jwtProvider.isValidToken(token)) {
             throw new IllegalArgumentException(INVALID_TOKEN_MESSAGE);

@@ -65,7 +65,6 @@ public class Admin extends BaseEntity {
     public void updateNickNameAndPhoneNumber(String nickName, String phoneNumber) {
         if (nickName == null && phoneNumber == null) {
             throw new IllegalArgumentException("변경할 내용이 없습니다.");
-
         }
         if (nickName != null) {
             this.nickName = nickName;
@@ -75,4 +74,11 @@ public class Admin extends BaseEntity {
         }
     }
 
+    public void passwordUpdate(String password) {
+        String hashPassword = SecurityUtils.sha256EncryptHex2(password);
+        if (this.getPassword().equals(hashPassword)) {
+            throw new IllegalArgumentException("똑같은 비밀번호 입니다.");
+        }
+        this.password = hashPassword;
+    }
 }

@@ -1,5 +1,6 @@
 package MusinsaClone.order;
 
+import MusinsaClone.customers.Customer;
 import MusinsaClone.util.BaseEntity;
 import jakarta.persistence.*;
 
