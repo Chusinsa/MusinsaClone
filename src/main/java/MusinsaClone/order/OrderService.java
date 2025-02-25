@@ -6,6 +6,9 @@ import MusinsaClone.order.DTO.CreateOrderRequest;
 import MusinsaClone.order.DTO.OrderViewResponse;
 import MusinsaClone.order.DTO.OrderListResponse;
 import MusinsaClone.order.DTO.OrderResponse;
+import MusinsaClone.orderDetail.OrderDetail;
+import MusinsaClone.orderDetail.OrderDetailRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +19,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository) {
+    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, OrderDetailRepository orderDetailRepository) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
+        this.orderDetailRepository = orderDetailRepository;
     }
 
     public OrderResponse create(CreateOrderRequest createOrderRequest, Customer customer) {
@@ -49,5 +54,14 @@ public class OrderService {
                 order.getCustomer().getId,
                 order.getAddress(),
                 order.getTotalPrice());
+    }
+
+    @Transactional
+    public void delete(Long orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Id(orderId);
+        for (OrderDetail orderDetail : orderDetails) {
+            orderDetailRepository.delete(orderDetail);
+        }
+        orderRepository.deleteById(orderId);
     }
 }
