@@ -3,10 +3,7 @@ package MusinsaClone.orderDetail;
 import MusinsaClone.order.DTO.CreateOrderRequest;
 import MusinsaClone.order.Order;
 import MusinsaClone.order.OrderRepository;
-import MusinsaClone.orderDetail.DTO.CreateOrderDetailRequest;
-import MusinsaClone.orderDetail.DTO.CreateOrderDetailResponse;
-import MusinsaClone.orderDetail.DTO.OrderDetailListResponse;
-import MusinsaClone.orderDetail.DTO.OrderDetailResponse;
+import MusinsaClone.orderDetail.DTO.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -55,5 +52,16 @@ public class OrderDetailService {
                                 orderDetail.getProduct().getId))
                         .toList()
         );
+    }
+
+    public OrderDetailviewResponse getDetail(Long orderDetailId) {
+        OrderDetail orderDetail = orderDetailRepository.findById(orderDetailId).orElseThrow(
+                () -> new NoSuchElementException("해당하는 상세주문이 없습니다."));
+        return new OrderDetailviewResponse(
+                orderDetail.getId(),
+                orderDetail.getOrder().getId(),
+                orderDetail.getProduct().getId,
+                orderDetail.getProductCount(),
+                orderDetail.getPrice());
     }
 }
