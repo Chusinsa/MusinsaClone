@@ -3,9 +3,8 @@ package MusinsaClone.orderDetail;
 import MusinsaClone.order.DTO.CreateOrderRequest;
 import MusinsaClone.orderDetail.DTO.CreateOrderDetailRequest;
 import MusinsaClone.orderDetail.DTO.CreateOrderDetailResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import MusinsaClone.orderDetail.DTO.OrderDetailListResponse;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class OrderDetailRestController {
@@ -19,5 +18,10 @@ public class OrderDetailRestController {
     @PostMapping("/orderdetails")
     public CreateOrderDetailResponse create(@RequestBody CreateOrderDetailRequest createOrderDetailRequest) {
         return orderDetailService.create(createOrderDetailRequest);
+    }
+
+    @GetMapping("/orderdetails/{orderId}")
+    public OrderDetailListResponse getAll(@PathVariable Long orderId) {
+        return orderDetailService.getAll(orderId);
     }
 }

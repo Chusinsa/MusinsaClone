@@ -5,9 +5,12 @@ import MusinsaClone.order.Order;
 import MusinsaClone.order.OrderRepository;
 import MusinsaClone.orderDetail.DTO.CreateOrderDetailRequest;
 import MusinsaClone.orderDetail.DTO.CreateOrderDetailResponse;
+import MusinsaClone.orderDetail.DTO.OrderDetailListResponse;
+import MusinsaClone.orderDetail.DTO.OrderDetailResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -41,5 +44,16 @@ public class OrderDetailService {
         return new CreateOrderDetailResponse(orderDetail.getId(), orderDetail.getProduct().getId);
     }
 
-
+    public OrderDetailListResponse getAll(Long orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Id(orderId);
+        return new OrderDetailListResponse(
+                orderId,
+                orderDetails
+                        .stream()
+                        .map(orderDetail -> new OrderDetailResponse(
+                                orderDetail.getId(),
+                                orderDetail.getProduct().getId))
+                        .toList()
+        );
+    }
 }
