@@ -41,7 +41,9 @@ public class OrderRestController {
     }
 
     @DeleteMapping("/orders/{orderId}")
-    public void delete(@PathVariable Long orderId) {
+    public void delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                       @PathVariable Long orderId) {
+        Customer customer = loginMemberResolver.resolveCustomerFromToken(token);
         orderService.delete(orderId);
     }
 }
