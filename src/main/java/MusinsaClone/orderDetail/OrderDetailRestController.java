@@ -21,7 +21,7 @@ public class OrderDetailRestController {
         return orderDetailService.create(createOrderDetailRequest);
     }
 
-    @GetMapping("/orderdetails/{orderId}")
+    @GetMapping("/orders/{orderId}/orderdetails")
     public OrderDetailListResponse getAll(@PathVariable Long orderId) {
         return orderDetailService.getAll(orderId);
     }
