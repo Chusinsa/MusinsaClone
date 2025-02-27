@@ -1,6 +1,7 @@
 package MusinsaClone.customers;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -11,30 +12,37 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false,unique = true)
+    private String loginId;
+
+    @Column(nullable = false)
     private String username;//유저 이름으로 로그인(ID)
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
     private String nickname;
+
     @Column(nullable = false)
     private String email;
+
     @Column(nullable = false)
     private String phone;
+
     @Column(nullable = false)
     private String birthdate;
+
     @Column(nullable = false)
     private String address;
-    @CreatedDate
-    LocalDateTime createdAt;
-    @LastModifiedDate
-    LocalDateTime updatedAt;
 
-    public Customer() {
+    private Customer() {
     }
 
-    public Customer(String username, String password, String nickname, String email, String phone, String birthdate, String address) {
+    public Customer(String username,String loginId, String password, String nickname, String email, String phone, String birthdate, String address) {
         this.username = username;
+        this.loginId = loginId;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
@@ -50,6 +58,10 @@ public class Customer {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getLoginId() {
+        return loginId;
     }
 
     public String getPassword() {
@@ -76,11 +88,25 @@ public class Customer {
         return address;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Customer updateWith(CustomerRequest request) {
+        return new Customer(
+                isNotEmpty(request.username()) ? request.username() : this.username,
+                isNotEmpty(request.loginId()) ? request.loginId() : this.loginId,
+                isNotEmpty(request.password()) ? request.password() : this.password,
+                isNotEmpty(request.nickname()) ? request.nickname() : this.nickname,
+                isNotEmpty(request.email()) ? request.email() : this.email,
+                isNotEmpty(request.phone()) ? request.phone() : this.phone,
+                isNotEmpty(request.birthdate()) ? request.birthdate() : this.birthdate,
+                isNotEmpty(request.address()) ? request.address() : this.address
+        );
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    // 유효성 검사 메서드
+    private boolean isNotEmpty(String value) {
+        return value != null && !value.trim().isEmpty();
     }
+
+
+
 }
+
