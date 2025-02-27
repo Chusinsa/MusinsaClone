@@ -42,5 +42,16 @@ public class CustomerController {
                 .orElseThrow(() -> new RuntimeException("Invalid token or customer not found"));
         return customerService.update(customer, request);
     }
+
     //회원 탈퇴(DELETE/customers}/RequestBody/토큰
+    @DeleteMapping()
+    public CustomerResponse delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                   @Valid @RequestBody CustomerRequest request) {
+        Customer customer = loginCustomerResolver.resolveCustomerFromToken(token);
+
+        customerService.deleteCustomer(customer);
+
+
+        return new CustomerResponse(customer.getLoginId());
+    }
 }

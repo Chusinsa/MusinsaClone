@@ -45,21 +45,27 @@ public class CustomerService {
         return new CustomerResponse(customer.getLoginId());
     }
 
-        @Transactional
-        public CustomerResponse update(Customer customer, @Valid CustomerRequest request) {
+    @Transactional
+    public CustomerResponse update(Customer customer, @Valid CustomerRequest request) {
 
-            Customer existingCustomer = customerRepository.findById(customer.getId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found"));
-
-
-            Customer updatedCustomer = existingCustomer.updateWith(request);
+        Customer existingCustomer = customerRepository.findById(customer.getId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
 
-            customerRepository.save(updatedCustomer);
+        Customer updatedCustomer = existingCustomer.updateWith(request);
 
 
-            return new CustomerResponse(updatedCustomer.getLoginId());
-        }
+        customerRepository.save(updatedCustomer);
 
 
+        return new CustomerResponse(updatedCustomer.getLoginId());
     }
+
+    @Transactional
+    public void deleteCustomer(Customer customer) {
+        Customer existingCustomer = customerRepository.findById(customer.getId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        customerRepository.delete(existingCustomer);
+    }
+}
