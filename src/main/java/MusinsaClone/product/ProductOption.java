@@ -12,49 +12,69 @@ public class ProductOption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String optionName;  // 예: 색상
+
     @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 
-    private String optionName;
+    @ManyToOne
+    @JoinColumn(name = "parent_option_id")
+    private ProductOption parentOption;
 
-    @OneToMany(mappedBy = "productOption")
-    private List<ProductOptionDetail> optionDetails = new ArrayList<>();
+    @OneToMany(mappedBy = "parentOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductOption> subOptions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductOptionSub> optionValues = new ArrayList<>();
 
     public ProductOption() {
     }
 
-    public ProductOption(Product product,String optionName, List<ProductOptionDetail> optionDetails) {
-        this.product = product;
+    public ProductOption(String optionName, Product product) {
         this.optionName = optionName;
-        this.optionDetails = optionDetails;
-    }
-
-    public ProductOption(Product product, String optionName) {
         this.product = product;
-        this.optionName = optionName;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public String getOptionName() {
         return optionName;
     }
 
-    public List<ProductOptionDetail> getOptionDetails() {
-        return optionDetails;
+    public Product getProduct() {
+        return product;
+    }
+
+    public ProductOption getParentOption() {
+        return parentOption;
+    }
+
+    public List<ProductOption> getSubOptions() {
+        return subOptions;
+    }
+
+    public List<ProductOptionSub> getOptionValues() {
+        return optionValues;
+    }
+
+    public void setParentOption(ProductOption parentOption) {
+        this.parentOption = parentOption;
     }
 
     public void setProduct(Product product) {
         this.product = product;
     }
 
-    public void setOptionDetails(List<ProductOptionDetail> optionDetails) {
-        this.optionDetails = optionDetails;
+    public void addSubOption(ProductOption productOption) {
+        productOption.setParentOption(this);
+        this.subOptions.add(productOption);
+    }
+
+    public void addOptionValue(ProductOptionSub optionSub) {
+        optionSub.setOptionGroup(this);
+        this.optionValues.add(optionSub);
     }
 }
