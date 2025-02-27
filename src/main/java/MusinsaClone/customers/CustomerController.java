@@ -1,7 +1,7 @@
 package MusinsaClone.customers;
 
 import MusinsaClone.admin.Admin;
-import MusinsaClone.util.LoginMemberResolver;
+//import MusinsaClone.util.LoginMemberResolver;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
