@@ -2,6 +2,7 @@ package MusinsaClone.customers;
 
 public record CustomerRequest(
         String username,
+        String loginId,
         String password,
         String nickname,
         String email,
@@ -9,4 +10,5 @@ public record CustomerRequest(
         String birthdate,
         String address
 ) {
+
 }
