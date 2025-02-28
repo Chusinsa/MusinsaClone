@@ -9,10 +9,7 @@ import MusinsaClone.util.JwtProvider;
 import MusinsaClone.util.LoginAdminResolver;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ReviewRestController {
@@ -29,5 +26,12 @@ public class ReviewRestController {
     public ReviewCreateResponse create(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody ReviewCreate reviewCreate) {
         Customer customer = loginCustomerResolver.resolveCustomerFromToken(token);
         return reviewService.create(reviewCreate, customer);
+    }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ApiResponse<Void> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, Long reviewId) {
+        Customer customer = loginCustomerResolver.resolveCustomerFromToken(token);
+        reviewService.delete(customer, reviewId);
+        return ApiResponse.success(null);
     }
 }
