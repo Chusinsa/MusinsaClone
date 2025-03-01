@@ -1,6 +1,8 @@
 package MusinsaClone.admin;
 
-import MusinsaClone.admin.DTO.*;
+import MusinsaClone.admin.dto.*;
+import MusinsaClone.admin.dto.AdminCreate;
+import MusinsaClone.admin.dto.AdminCreateResponse;
 import MusinsaClone.util.ApiResponse;
 import MusinsaClone.util.LoginAdminResolver;
 import jakarta.validation.Valid;
