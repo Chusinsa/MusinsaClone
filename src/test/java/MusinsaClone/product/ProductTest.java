@@ -90,6 +90,18 @@ public class ProductTest {
                 .as(ProductResponse.class);
     }
 
+    private void 공개(String token, Long productId){
+        RestAssured
+                .given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .pathParam("productId",productId)
+                .when()
+                .patch("/products/{productId}")
+                .then().log().all()
+                .extract()
+                .response();
+    }
+
     @Test
     void 옵션_없는_상품_생성() {
         AdminCreateResponse 관리자 = 관리자_생성();
@@ -349,6 +361,10 @@ public class ProductTest {
         ProductResponse 상품2 = 상품_생성(로그인.token(), 신발);
         ProductResponse 상품3 = 상품_생성(로그인.token(), 옷);
 
+        공개(로그인.token(), 상품1.productId());
+        공개(로그인.token(), 상품2.productId());
+        공개(로그인.token(), 상품3.productId());
+
         List<ProductListResponse> 상품들 = RestAssured
                 .given().log().all()
                 .when()
@@ -388,5 +404,68 @@ public class ProductTest {
                 .statusCode(200)
                 .extract()
                 .as(ProductResponse.class);
+    }
+
+    @Test
+    void 공개에서_비공개() {
+        AdminCreateResponse 관리자 = 관리자_생성();
+        AdminLoginResponse 로그인 = 관리자_로그인();
+
+        ProductRequest 티 = new ProductRequest(
+                "컬러 티셔츠",
+                25000,
+                "다양한 색상의 티셔츠입니다.",
+                Category.TOP,
+                Condition.New,
+                List.of(
+                        new ProductOptionRequest("빨강", "240",10),
+                        new ProductOptionRequest("파랑", "240",15),
+                        new ProductOptionRequest("검정", "240",20)));
+
+        ProductRequest 신발 = new ProductRequest(
+                "신발",
+                25000,
+                "편안한신발.",
+                Category.SHOES,
+                Condition.New,
+                List.of(
+                        new ProductOptionRequest("빨강", "240",10),
+                        new ProductOptionRequest("파랑", "240",15),
+                        new ProductOptionRequest("검정", "240",20)));
+
+        ProductResponse 상품1 = 상품_생성(로그인.token(), 티);
+        ProductResponse 상품2 = 상품_생성(로그인.token(), 신발);
+
+        공개(로그인.token(), 상품1.productId());
+        공개(로그인.token(), 상품2.productId());
+
+        List<ProductListResponse> 모두공개_상품들 = RestAssured
+                .given().log().all()
+                .when()
+                .get("/products")
+                .then().log().all()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getList(".", ProductListResponse.class);
+
+
+        assertThat(모두공개_상품들.size()).isEqualTo(2);
+
+        공개(로그인.token(), 상품1.productId());
+
+        List<ProductListResponse> 비공개_상품들 = RestAssured
+                .given().log().all()
+                .when()
+                .get("/products")
+                .then().log().all()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getList(".", ProductListResponse.class);
+
+
+        assertThat(비공개_상품들.size()).isEqualTo(1);
+
     }
 }
