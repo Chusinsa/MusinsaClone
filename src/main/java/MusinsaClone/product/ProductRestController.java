@@ -3,7 +3,7 @@ package MusinsaClone.product;
 import MusinsaClone.admin.Admin;
 
 import MusinsaClone.product.dto.*;
-import MusinsaClone.util.LoginMemberResolver;
+import MusinsaClone.util.LoginAdminResolver;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +15,9 @@ import java.util.List;
 public class ProductRestController {
 
     private final ProductService productService;
-    private final LoginMemberResolver loginMemberResolver;
+    private final LoginAdminResolver loginMemberResolver;
 
-    public ProductRestController(ProductService productService, LoginMemberResolver loginMemberResolver) {
+    public ProductRestController(ProductService productService, LoginAdminResolver loginMemberResolver) {
         this.productService = productService;
         this.loginMemberResolver = loginMemberResolver;
     }
@@ -25,7 +25,7 @@ public class ProductRestController {
     @PostMapping("/products")
     public ProductResponse create (@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                    @RequestBody ProductRequest productCreateRequest){
-        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        Admin admin = loginMemberResolver.resolveAdminFromToken(token);
         return productService.save(admin, productCreateRequest);
     }
 
@@ -34,14 +34,14 @@ public class ProductRestController {
                                         @PathVariable Long productId,
                                         @RequestBody ProductUpdateRequest productUpdateRequest
                                         ){
-        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        Admin admin = loginMemberResolver.resolveAdminFromToken(token);
         return productService.update(admin, productId, productUpdateRequest);
     }
 
     @DeleteMapping("/products/{productId}")
     public void deleteByProductId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                        @PathVariable Long productId){
-        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        Admin admin = loginMemberResolver.resolveAdminFromToken(token);
         productService.deleteByProductId(admin, productId);
     }
 
@@ -49,7 +49,7 @@ public class ProductRestController {
     public void deleteByOptionId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                        @PathVariable Long productId,
                        @PathVariable Long optionId){
-        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        Admin admin = loginMemberResolver.resolveAdminFromToken(token);
         productService.deleteByOptionId(admin, productId, optionId);
     }
 
@@ -71,7 +71,7 @@ public class ProductRestController {
     @PatchMapping("/products/{productId}")
     public void switchPublicPrivate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                     @PathVariable Long productId){
-        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        Admin admin = loginMemberResolver.resolveAdminFromToken(token);
         productService.switchPublicPrivate(admin,productId);
     }
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductQueryRepository {
@@ -57,5 +58,17 @@ public class ProductQueryRepository {
         }
         return product.productCondition.eq(condition);
     }
+
+    public Optional<Product> findById(Long id) {
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(product)
+                .where(
+                        product.id.eq(id),
+                        product.isDeleted.isFalse(),
+                        product.isPrivate.isFalse()
+                )
+                .fetchOne());
+    }
+
 
 }
