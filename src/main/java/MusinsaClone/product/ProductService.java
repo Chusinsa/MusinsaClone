@@ -3,6 +3,8 @@ package MusinsaClone.product;
 import MusinsaClone.admin.Admin;
 import MusinsaClone.admin.AdminRepository;
 import MusinsaClone.product.dto.*;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +18,14 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final AdminRepository adminRepository;
     private final ProductOptionRepository productOptionRepository;
+    private final ProductQueryRepository productQueryRepository;
 
 
-    public ProductService(ProductRepository productRepository, AdminRepository adminRepository, ProductOptionRepository productOptionRepository) {
+    public ProductService(ProductRepository productRepository, AdminRepository adminRepository, ProductOptionRepository productOptionRepository, ProductQueryRepository productQueryRepository) {
         this.productRepository = productRepository;
         this.adminRepository = adminRepository;
         this.productOptionRepository = productOptionRepository;
+        this.productQueryRepository = productQueryRepository;
     }
 
 
@@ -51,14 +55,7 @@ public class ProductService {
             product.addOptions(productOptions);
         }
 
-        List<ProductOptionResponse> optionResponses = product.getProductOptions()
-                .stream()
-                .map(option -> new ProductOptionResponse(
-                        option.getId(),
-                        option.getColor(),
-                        option.getSize(),
-                        option.getStock()
-                )).toList();
+        List<ProductOptionResponse> optionResponses = convertRequestToResponse(product);
 
         return new ProductResponse(
                 product.getId(),
@@ -96,14 +93,7 @@ public class ProductService {
                 productOptions
         );
 
-        List<ProductOptionResponse> optionResponses = product.getProductOptions()
-                .stream()
-                .map(option -> new ProductOptionResponse(
-                        option.getId(),
-                        option.getColor(),
-                        option.getSize(),
-                        option.getStock()
-                )).toList();
+        List<ProductOptionResponse> optionResponses = convertRequestToResponse(product);
 
         return new ProductUpdateResponse(
                 productId, product.getName(),
@@ -140,8 +130,8 @@ public class ProductService {
     }
 
 
-    public List<ProductListResponse> findAll() {
-        return productRepository.findAll()
+    public List<ProductListResponse> findAll(String name, Category category, Condition condition, Pageable pageable) {
+        return productQueryRepository.findAll(name, category, condition, pageable)
                 .stream()
                 .map(product ->
                         new ProductListResponse(
@@ -158,14 +148,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품이 없습니다."));
 
-        List<ProductOptionResponse> optionResponses = product.getProductOptions()
-                .stream()
-                .map(option -> new ProductOptionResponse(
-                        option.getId(),
-                        option.getColor(),
-                        option.getSize(),
-                        option.getStock()
-                )).toList();
+        List<ProductOptionResponse> optionResponses = convertRequestToResponse(product);
 
         return new ProductResponse(
                 productId,
@@ -190,4 +173,15 @@ public class ProductService {
     }
 
 
+    @Transactional
+    public void switchPublicPrivate(Admin admin, Long productId) {
+        Admin admin1 = adminRepository.findById(admin.getId())
+                .orElseThrow(() -> new NoSuchElementException("관리자가 아닙니다."));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("상품이 없습니다."));
+
+        product.toggleVisibility();
+
+    }
 }
