@@ -6,6 +6,7 @@ import MusinsaClone.product.Product;
 import MusinsaClone.product.ProductRepository;
 import MusinsaClone.review.DTO.ReviewCreate;
 import MusinsaClone.review.DTO.ReviewCreateResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -32,5 +33,12 @@ public class ReviewService {
         Review review = new Review(loginCustomer, product, dto.title(), dto.detail());
         reviewRepository.save(review);
         return new ReviewCreateResponse(review.getId(), review.getCreatedAt());
+    }
+
+    @Transactional
+    public void delete(Customer customer, Long reviewId) {
+        Customer loginCustomer = customerRepository.findByLoginId(customer.getLoginId());
+
+        reviewRepository.deleteById(reviewId);
     }
 }
