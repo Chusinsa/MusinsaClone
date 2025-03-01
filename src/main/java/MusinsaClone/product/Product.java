@@ -33,7 +33,7 @@ public class Product extends BaseEntity {
 
     private boolean isOnSale = true;
 
-    private boolean isPrivate = false;
+    private boolean isPrivate = true;
 
     @OneToMany(mappedBy = "product")
     private List<ProductOption> productOptions = new ArrayList<>();
@@ -113,5 +113,9 @@ public class Product extends BaseEntity {
     public void addOptions(List<ProductOption> productOptions) {
         this.getProductOptions().addAll(productOptions);
 
+    }
+
+    public void toggleVisibility() {
+        this.isPrivate = !this.isPrivate;
     }
 }
