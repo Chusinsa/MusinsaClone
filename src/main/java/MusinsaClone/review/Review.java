@@ -34,6 +34,21 @@ public class Review extends BaseEntity {
         this.detail = detail;
     }
 
+    public void updateReview(String title, String detail) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (detail != null) {
+            this.detail = detail;
+        }
+    }
+
+    public boolean isCustomerMatch(Customer customer) {  // 자신이 쓴 리뷰가 맞는지 검증하는 함수
+        if (this.customer.equals(customer)) {
+            return true;
+        } else throw new IllegalArgumentException("회원이 일치하지 않습니다.");
+    }
+
     public Long getId() {
         return id;
     }

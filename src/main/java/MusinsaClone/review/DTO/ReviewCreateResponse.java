@@ -1,4 +1,4 @@
-package MusinsaClone.review.DTO;
+package MusinsaClone.review.dto;
 
 import java.time.LocalDateTime;
 

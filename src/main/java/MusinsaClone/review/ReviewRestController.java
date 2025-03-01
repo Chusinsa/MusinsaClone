@@ -2,11 +2,11 @@ package MusinsaClone.review;
 
 import MusinsaClone.customers.Customer;
 import MusinsaClone.customers.LoginCustomerResolver;
-import MusinsaClone.review.DTO.ReviewCreate;
-import MusinsaClone.review.DTO.ReviewCreateResponse;
+import MusinsaClone.review.dto.ReviewCreate;
+import MusinsaClone.review.dto.ReviewCreateResponse;
+import MusinsaClone.review.dto.ReviewResponse;
+import MusinsaClone.review.dto.ReviewUpdateDTO;
 import MusinsaClone.util.ApiResponse;
-import MusinsaClone.util.JwtProvider;
-import MusinsaClone.util.LoginAdminResolver;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,12 @@ public class ReviewRestController {
     public ReviewCreateResponse create(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody ReviewCreate reviewCreate) {
         Customer customer = loginCustomerResolver.resolveCustomerFromToken(token);
         return reviewService.create(reviewCreate, customer);
+    }
+
+    @PutMapping("/reviews")
+    public ReviewResponse update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody ReviewUpdateDTO reviewUpdate) {
+        Customer customer = loginCustomerResolver.resolveCustomerFromToken(token);
+        return reviewService.update(customer, reviewUpdate);
     }
 
     @DeleteMapping("/reviews/{reviewId}")
