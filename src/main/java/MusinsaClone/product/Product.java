@@ -1,52 +1,52 @@
 package MusinsaClone.product;
 
+import MusinsaClone.util.BaseEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
     private int price;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private Category category;
 
+    @Column(nullable = false)
     private Condition productCondition;
 
     private boolean isDeleted = false;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductOption> productOptions = new ArrayList<>();
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 
     private int reviewCount = 0;
 
     private boolean isOnSale = true;
 
-    private boolean isPrivate = false;
+    private boolean isPrivate = true;
 
-    public Product() {
+    @OneToMany(mappedBy = "product")
+    private List<ProductOption> productOptions = new ArrayList<>();
+
+    protected Product() {
     }
 
-    public Product(String name, int price, String description, Category category, Condition productCondition,LocalDateTime createdAt) {
+    public Product(String name, int price, String description, Category category, Condition productCondition) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.category = category;
         this.productCondition = productCondition;
-        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -77,13 +77,6 @@ public class Product {
         return isDeleted;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
 
     public int getReviewCount() {
         return reviewCount;
@@ -101,7 +94,28 @@ public class Product {
         return productOptions;
     }
 
-    public void addProductOptions(List<ProductOption> productOptions) {
-        this.productOptions.addAll(productOptions);
+    public void setDeleted(){
+        this.isDeleted=true;
+    }
+
+    public void update(String name,
+                       int price,
+                       String description,
+                       Condition productCondition,
+                       List<ProductOption> productOptions){
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.productCondition = productCondition;
+        this.productOptions = productOptions;
+    }
+
+    public void addOptions(List<ProductOption> productOptions) {
+        this.getProductOptions().addAll(productOptions);
+
+    }
+
+    public void toggleVisibility() {
+        this.isPrivate = !this.isPrivate;
     }
 }

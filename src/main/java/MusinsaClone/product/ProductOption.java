@@ -1,9 +1,7 @@
 package MusinsaClone.product;
 
-import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 
 @Entity
 public class ProductOption {
@@ -12,49 +10,57 @@ public class ProductOption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String color;
+
+    private String size;
+
+    private int stock;
+
+    private boolean isDeleted = false;
+
     @ManyToOne
     private Product product;
 
-    private String optionName;
 
-    @OneToMany(mappedBy = "productOption")
-    private List<ProductOptionDetail> optionDetails = new ArrayList<>();
-
-    public ProductOption() {
+    protected ProductOption() {
     }
 
-    public ProductOption(Product product,String optionName, List<ProductOptionDetail> optionDetails) {
+    public ProductOption(String color, String size, int stock, Product product) {
+        this.color = color;
+        this.size = size;
+        this.stock = stock;
         this.product = product;
-        this.optionName = optionName;
-        this.optionDetails = optionDetails;
-    }
-
-    public ProductOption(Product product, String optionName) {
-        this.product = product;
-        this.optionName = optionName;
     }
 
     public Long getId() {
         return id;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
     public Product getProduct() {
         return product;
     }
 
-    public String getOptionName() {
-        return optionName;
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public List<ProductOptionDetail> getOptionDetails() {
-        return optionDetails;
+    public void setDeleted(){
+        this.isDeleted=true;
     }
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public void setOptionDetails(List<ProductOptionDetail> optionDetails) {
-        this.optionDetails = optionDetails;
     }
 }
