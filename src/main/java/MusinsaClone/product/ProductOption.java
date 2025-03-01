@@ -1,9 +1,7 @@
 package MusinsaClone.product;
 
-import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 
 @Entity
 public class ProductOption {
@@ -12,27 +10,25 @@ public class ProductOption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String optionName;  // 예: 색상
+    private String color;
+
+    private String size;
+
+    private int stock;
+
+    private boolean isDeleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_option_id")
-    private ProductOption parentOption;
 
-    @OneToMany(mappedBy = "parentOption", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOption> subOptions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOptionSub> optionValues = new ArrayList<>();
-
-    public ProductOption() {
+    protected ProductOption() {
     }
 
-    public ProductOption(String optionName, Product product) {
-        this.optionName = optionName;
+    public ProductOption(String color, String size, int stock, Product product) {
+        this.color = color;
+        this.size = size;
+        this.stock = stock;
         this.product = product;
     }
 
@@ -40,41 +36,31 @@ public class ProductOption {
         return id;
     }
 
-    public String getOptionName() {
-        return optionName;
+    public String getColor() {
+        return color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public int getStock() {
+        return stock;
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public ProductOption getParentOption() {
-        return parentOption;
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public List<ProductOption> getSubOptions() {
-        return subOptions;
-    }
-
-    public List<ProductOptionSub> getOptionValues() {
-        return optionValues;
-    }
-
-    public void setParentOption(ProductOption parentOption) {
-        this.parentOption = parentOption;
+    public void setDeleted(){
+        this.isDeleted=true;
     }
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public void addSubOption(ProductOption productOption) {
-        productOption.setParentOption(this);
-        this.subOptions.add(productOption);
-    }
-
-    public void addOptionValue(ProductOptionSub optionSub) {
-        optionSub.setOptionGroup(this);
-        this.optionValues.add(optionSub);
     }
 }

@@ -1,6 +1,7 @@
 package MusinsaClone.product;
 
 import MusinsaClone.admin.Admin;
+
 import MusinsaClone.product.dto.*;
 import MusinsaClone.util.LoginMemberResolver;
 import org.springframework.http.HttpHeaders;
@@ -20,8 +21,8 @@ public class ProductRestController {
     }
 
     @PostMapping("/products")
-    public ProductCreateResponse create (@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                         @RequestBody ProductCreateRequest productCreateRequest){
+    public ProductResponse create (@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                   @RequestBody ProductRequest productCreateRequest){
         Admin admin = loginMemberResolver.resolveUserFromToken(token);
         return productService.save(admin, productCreateRequest);
     }
@@ -29,16 +30,25 @@ public class ProductRestController {
     @PutMapping("/products/{productId}")
     public ProductUpdateResponse update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                         @PathVariable Long productId,
-                                        @RequestBody ProductUpdateRequest productUpdateRequest){
+                                        @RequestBody ProductUpdateRequest productUpdateRequest
+                                        ){
         Admin admin = loginMemberResolver.resolveUserFromToken(token);
         return productService.update(admin, productId, productUpdateRequest);
     }
 
     @DeleteMapping("/products/{productId}")
-    public void delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public void deleteByProductId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                        @PathVariable Long productId){
         Admin admin = loginMemberResolver.resolveUserFromToken(token);
-        productService.delete(admin, productId);
+        productService.deleteByProductId(admin, productId);
+    }
+
+    @DeleteMapping("/products/{productId}/{optionId}")
+    public void deleteByOptionId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                       @PathVariable Long productId,
+                       @PathVariable Long optionId){
+        Admin admin = loginMemberResolver.resolveUserFromToken(token);
+        productService.deleteByOptionId(admin, productId, optionId);
     }
 
     @GetMapping("/products")
@@ -47,7 +57,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/products/{productId}")
-    public ProductCreateResponse findById(@PathVariable Long productId){
+    public ProductResponse findById(@PathVariable Long productId){
         return productService.findById(productId);
     }
 

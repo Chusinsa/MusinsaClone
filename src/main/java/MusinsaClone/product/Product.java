@@ -3,7 +3,6 @@ package MusinsaClone.product;
 import MusinsaClone.util.BaseEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +35,10 @@ public class Product extends BaseEntity {
 
     private boolean isPrivate = false;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductOption> options = new ArrayList<>();
+    @OneToMany(mappedBy = "product")
+    private List<ProductOption> productOptions = new ArrayList<>();
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(String name, int price, String description, Category category, Condition productCondition) {
@@ -91,28 +90,28 @@ public class Product extends BaseEntity {
         return isPrivate;
     }
 
-    public List<ProductOption> getOptions() {
-        return options;
+    public List<ProductOption> getProductOptions() {
+        return productOptions;
     }
 
     public void setDeleted(){
         this.isDeleted=true;
     }
 
-    public void addOption(ProductOption productOption) {
-        this.options.add(productOption);
-        productOption.setProduct(this);
-    }
-
     public void update(String name,
                        int price,
                        String description,
                        Condition productCondition,
-                       List<ProductOption> options){
+                       List<ProductOption> productOptions){
         this.name = name;
         this.price = price;
         this.description = description;
         this.productCondition = productCondition;
-        this.options = options;
+        this.productOptions = productOptions;
+    }
+
+    public void addOptions(List<ProductOption> productOptions) {
+        this.getProductOptions().addAll(productOptions);
+
     }
 }

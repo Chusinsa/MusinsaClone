@@ -11,7 +11,7 @@ public record ProductUpdateResponse(
         int price,
         String description,
         Condition productCondition,
-        List<OptionGroup> options,
+        List<ProductOptionResponse> productOption,
         LocalDateTime updateAt
 ) {
 }

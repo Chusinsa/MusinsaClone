@@ -6,6 +6,7 @@ import MusinsaClone.admin.DTO.AdminCreateResponse;
 import MusinsaClone.admin.DTO.AdminLogin;
 import MusinsaClone.admin.DTO.AdminLoginResponse;
 import MusinsaClone.product.dto.*;
+import MusinsaClone.product.dto.ProductOptionRequest;
 import MusinsaClone.util.JwtProvider;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -75,7 +76,7 @@ public class ProductTest {
                 .as(AdminLoginResponse.class);
     }
 
-    private ProductCreateResponse 상품_생성(String token, ProductCreateRequest request) {
+    private ProductResponse 상품_생성(String token, ProductRequest request) {
         return RestAssured
                 .given().log().all()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -86,7 +87,7 @@ public class ProductTest {
                 .then().log().all()
                 .statusCode(200)
                 .extract()
-                .as(ProductCreateResponse.class);
+                .as(ProductResponse.class);
     }
 
     @Test
@@ -94,7 +95,7 @@ public class ProductTest {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        ProductCreateRequest 옵션없는상품 = new ProductCreateRequest(
+        ProductRequest 옵션없는상품 = new ProductRequest(
                 "기본 티셔츠",
                 20000,
                 "심플한 기본 티셔츠입니다.",
@@ -103,11 +104,12 @@ public class ProductTest {
                 null
         );
 
-        ProductCreateResponse 상품 = 상품_생성(로그인.token(), 옵션없는상품);
+
+        ProductResponse 상품 = 상품_생성(로그인.token(), 옵션없는상품);
 
         assertNotNull(상품);
         assertEquals("기본 티셔츠", 상품.productName());
-        assertTrue(상품.options().isEmpty());
+        assertTrue(상품.productOption().isEmpty());
     }
 
     @Test
@@ -115,28 +117,25 @@ public class ProductTest {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        ProductCreateRequest 옵션1개상품 = new ProductCreateRequest(
-                "컬러 티셔츠",
-                25000,
-                "다양한 색상의 티셔츠입니다.",
-                Category.TOP,
+        ProductOptionRequest 옵션1 = new ProductOptionRequest("빨강", null, 10);
+        ProductOptionRequest 옵션2 = new ProductOptionRequest("파랑", null, 5);
+
+        ProductRequest 옵션1개상품 = new ProductRequest(
+                "나이키 운동화",
+                120000,
+                "편안한 운동화",
+                Category.SHOES,
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
+                List.of(옵션1, 옵션2)
         );
 
 
-        ProductCreateResponse 상품 = 상품_생성(로그인.token(), 옵션1개상품);
+
+        ProductResponse 상품 = 상품_생성(로그인.token(), 옵션1개상품);
 
         assertNotNull(상품);
-        assertThat(상품.productName()).isEqualTo("컬러 티셔츠");
-        assertThat(상품.options().size()).isEqualTo(1);
-        assertThat(상품.options().get(0).optionValues().size()).isEqualTo(3);
+        assertThat(상품.productName()).isEqualTo("나이키 운동화");
+        assertThat(상품.productOption()).hasSize(2);
 
     }
 
@@ -145,126 +144,24 @@ public class ProductTest {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        ProductCreateRequest 옵션2개상품 = new ProductCreateRequest(
-                "편안한 신발",
-                50000,
-                "편안한 신발입니다.",
+        ProductOptionRequest 옵션1 = new ProductOptionRequest("빨강", "230", 10);
+        ProductOptionRequest 옵션2 = new ProductOptionRequest("파랑", "240", 5);
+
+        ProductRequest 옵션2개상품 = new ProductRequest(
+                "나이키 운동화",
+                120000,
+                "편안한 운동화",
                 Category.SHOES,
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상",
-                                List.of(
-                                        new OptionValue("빨강", null),
-                                        new OptionValue("검정", null)
-                                ),
-                                List.of(
-                                        new OptionGroup("빨강",
-                                                List.of(
-                                                        new OptionValue("230", 3),
-                                                        new OptionValue("240", 5),
-                                                        new OptionValue("250", 7)
-                                                ),
-                                                null
-                                        ),
-                                        new OptionGroup("검정",
-                                                List.of(
-                                                        new OptionValue("230", 4),
-                                                        new OptionValue("240", 6),
-                                                        new OptionValue("250", 8)
-                                                ),
-                                                null
-                                        )
-                                )
-                        )
-                )
+                List.of(옵션1, 옵션2)
         );
 
-        ProductCreateResponse 상품 = 상품_생성(로그인.token(), 옵션2개상품);
+
+
+        ProductResponse 상품 = 상품_생성(로그인.token(), 옵션2개상품);
 
         assertNotNull(상품);
-        assertEquals("편안한 신발", 상품.productName());
-        assertThat(상품.options().get(0).optionValues().size()).isEqualTo(2);
-    }
-
-    @Test
-    void 옵션_3개_상품_생성() {
-        AdminCreateResponse 관리자 = 관리자_생성();
-        AdminLoginResponse 로그인 = 관리자_로그인();
-
-        ProductCreateRequest 옵션3개상품 = new ProductCreateRequest(
-                "패턴 운동화",
-                70000,
-                "다양한 무늬, 색상, 사이즈의 패턴 운동화입니다.",
-                Category.SHOES,
-                Condition.New,
-                List.of(
-                        new OptionGroup("무늬", List.of(
-                                        new OptionValue("체크무늬", null),
-                                        new OptionValue("줄무늬", null)),
-                                List.of(
-                                        new OptionGroup("체크무늬", List.of(), List.of(
-                                                new OptionGroup("빨강", List.of(
-                                                        new OptionValue("230", 3),
-                                                        new OptionValue("240", 5),
-                                                        new OptionValue("250", 7)), null
-                                                        ),
-                                                new OptionGroup("파랑", List.of(
-                                                        new OptionValue("230", 4),
-                                                        new OptionValue("240", 6),
-                                                        new OptionValue("250", 8)), null
-                                                        ),
-                                                new OptionGroup("초록", List.of(
-                                                        new OptionValue("230", 2),
-                                                        new OptionValue("240", 4),
-                                                        new OptionValue("250", 6)), null
-                                                        ),
-                                                new OptionGroup("노랑", List.of(
-                                                        new OptionValue("230", 3),
-                                                        new OptionValue("240", 5),
-                                                        new OptionValue("250", 7)), null
-                                                        )
-                                                )
-                                        ),
-                                        new OptionGroup("줄무늬", List.of(), List.of(
-                                                new OptionGroup("빨강", List.of(
-                                                        new OptionValue("230", 2),
-                                                        new OptionValue("240", 4),
-                                                        new OptionValue("250", 6)), null
-                                                        ),
-                                                new OptionGroup("파랑", List.of(
-                                                        new OptionValue("230", 3),
-                                                        new OptionValue("240", 5),
-                                                        new OptionValue("250", 7)), null
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                )
-        );
-        ProductCreateResponse 상품 = 상품_생성(로그인.token(), 옵션3개상품);
-
-        // 검증
-        assertNotNull(상품);
-        assertEquals(1, 상품.options().size());  // 무늬
-
-        OptionGroup patternOption = 상품.options().get(0);
-        assertEquals("무늬", patternOption.optionName());
-        assertEquals(2, patternOption.optionValues().size());  // 체크무늬, 줄무늬
-        assertEquals(2, patternOption.subOptions().size());  // 체크무늬 옵션그룹, 줄무늬 옵션그룹
-
-        OptionGroup checkPattern = patternOption.subOptions().get(0);
-        assertEquals("체크무늬", checkPattern.optionName());
-        assertEquals(4, checkPattern.subOptions().size());  // 빨강, 파랑, 초록, 노랑
-
-        OptionGroup stripePattern = patternOption.subOptions().get(1);
-        assertEquals("줄무늬", stripePattern.optionName());
-        assertEquals(2, stripePattern.subOptions().size());  // 빨강, 파랑
-
-        // 체크무늬의 빨강 옵션 검증
-        OptionGroup checkRedOption = checkPattern.subOptions().get(0);
-        assertEquals("빨강", checkRedOption.optionName());
-        assertEquals(3, checkRedOption.optionValues().size());  // 230, 240, 250
+        assertEquals("나이키 운동화", 상품.productName());
     }
 
     @Test
@@ -275,39 +172,34 @@ public class ProductTest {
         String 수정전_상품이름 = "수정 전 상품";
         String 수정후_상품이름 = "수정 후 상품";
 
-        ProductCreateRequest 옵션1개상품 = new ProductCreateRequest(
+        ProductOptionRequest 옵션1 = new ProductOptionRequest("빨강", "230", 10);
+        ProductOptionRequest 옵션2 = new ProductOptionRequest("파랑", "240", 5);
+
+        ProductRequest 수정_전_상품 = new ProductRequest(
                 수정전_상품이름,
-                25000,
-                "다양한 색상의 티셔츠입니다.",
-                Category.TOP,
+                120000,
+                "편안한 신발",
+                Category.SHOES,
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
+                List.of(옵션1, 옵션2)
         );
 
-        ProductCreateResponse 수정전_상품 = 상품_생성(로그인.token(), 옵션1개상품);
+        ProductResponse 수정전_상품 = 상품_생성(로그인.token(), 수정_전_상품);
+
+        ProductUpdateRequest 수정_후_상품 = new ProductUpdateRequest(
+                수정후_상품이름,
+                130000,
+                "가벼운 신발",
+                Condition.New,
+                List.of(new ProductOptionRequest("검정", "250", 3))
+        );
 
         ProductUpdateResponse 수정후_상품 = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + 로그인.token())
-                .pathParam("productId", 수정전_상품.id())
-                .body(new ProductUpdateRequest(
-                        수정후_상품이름,
-                        25000,
-                        "다양한 색상의 티셔츠입니다.",
-                        Condition.New,
-                        List.of(
-                                new OptionGroup("색상", List.of(
-                                        new OptionValue("빨강", 10),
-                                        new OptionValue("파랑", 15),
-                                        new OptionValue("검정", 20)
-                                ), null))))
+                .pathParam("productId", 수정전_상품.productId())
+                .body(수정_후_상품)
                 .when()
                 .put("/products/{productId}")
                 .then().log().all()
@@ -324,44 +216,32 @@ public class ProductTest {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        String 수정전_상품이름 = "기존 상품";
-        String 수정후_상품이름 = "수정된 상품";
+        ProductOptionRequest 수정전_옵션1 = new ProductOptionRequest("빨강", "230", 10);
+        ProductOptionRequest 수정전_옵션2 = new ProductOptionRequest("파랑", "240", 5);
 
-        ProductCreateRequest 기존상품 = new ProductCreateRequest(
-                수정전_상품이름,
+        ProductRequest 기존상품 = new ProductRequest(
+                "수정전_상품이름",
                 25000,
                 "기존 상품 설명",
                 Category.TOP,
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상", List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
-        );
+                List.of(수정전_옵션1, 수정전_옵션2));
 
-        ProductCreateResponse 수정전_상품 = 상품_생성(로그인.token(), 기존상품);
+        ProductResponse 수정전_상품 = 상품_생성(로그인.token(), 기존상품);
 
         ProductUpdateRequest 수정할_상품 = new ProductUpdateRequest(
-                수정후_상품이름,
+                "수정후_상품이름",
                 27000,
                 "수정된 상품 설명",
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상", List.of(
-                                new OptionValue("노랑", 5),
-                                new OptionValue("초록", 8)
-                        ), null)
-                )
-        );
+                List.of(new ProductOptionRequest("노랑", "240", 5)
+                ));
 
         ProductUpdateResponse 수정후_상품 = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + 로그인.token())
-                .pathParam("productId", 수정전_상품.id())
+                .pathParam("productId", 수정전_상품.productId())
                 .body(수정할_상품)
                 .when()
                 .put("/products/{productId}")
@@ -370,21 +250,8 @@ public class ProductTest {
                 .extract()
                 .as(ProductUpdateResponse.class);
 
-
-        List<OptionGroup> 수정된옵션 = 수정후_상품.options();
-        assertThat(수정된옵션).hasSize(1);
-        assertThat(수정된옵션.get(0).optionValues()).hasSize(2);
-
-        List<OptionValue> 수정된_옵션_이름들 = 수정된옵션.get(0).optionValues()
-                .stream()
-                .map(optionValue -> new OptionValue(
-                        optionValue.optionValue(),
-                        optionValue.stock()
-                ))
-                .toList();
-
-        assertThat(수정된_옵션_이름들.get(0).optionValue()).isEqualTo("노랑");
-        assertThat(수정된_옵션_이름들.get(1).optionValue()).isEqualTo("초록");
+        assertThat(수정전_상품.productOption()).hasSize(2);
+        assertThat(수정후_상품.productOption()).hasSize(1);
     }
 
     @Test
@@ -392,27 +259,21 @@ public class ProductTest {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        ProductCreateRequest 옵션1개상품 = new ProductCreateRequest(
+        ProductRequest 옵션1개상품 = new ProductRequest(
                 "컬러 티셔츠",
                 25000,
                 "다양한 색상의 티셔츠입니다.",
                 Category.TOP,
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
-        );
+                List.of(new ProductOptionRequest("빨강", "230", 10),
+                        new ProductOptionRequest("파랑", "240", 5)));
 
-        ProductCreateResponse 상품 = 상품_생성(로그인.token(), 옵션1개상품);
+        ProductResponse 상품 = 상품_생성(로그인.token(), 옵션1개상품);
 
         RestAssured
                 .given().log().all()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + 로그인.token())
-                .pathParam("productId", 상품.id())
+                .pathParam("productId", 상품.productId())
                 .when()
                 .delete("/products/{productId}")
                 .then().log().all()
@@ -420,58 +281,73 @@ public class ProductTest {
     }
 
     @Test
-    void 상품조회() {
+    void 옵션삭제() {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        ProductCreateRequest 티 = new ProductCreateRequest(
+        ProductRequest 옵션1개상품 = new ProductRequest(
                 "컬러 티셔츠",
                 25000,
                 "다양한 색상의 티셔츠입니다.",
                 Category.TOP,
                 Condition.New,
-                List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
-        );
+                List.of(new ProductOptionRequest("빨강", "230", 10),
+                        new ProductOptionRequest("파랑", "240", 5)));
 
-        ProductCreateRequest 신발 = new ProductCreateRequest(
+        ProductResponse 상품 = 상품_생성(로그인.token(), 옵션1개상품);
+
+        RestAssured
+                .given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + 로그인.token())
+                .pathParam("productId", 상품.productId())
+                .pathParam("optionId", 상품.productOption().get(0).optionId())
+                .when()
+                .delete("/products/{productId}/{optionId}")
+                .then().log().all()
+                .statusCode(200);
+
+    }
+
+    @Test
+    void 상품조회() {
+        AdminCreateResponse 관리자 = 관리자_생성();
+        AdminLoginResponse 로그인 = 관리자_로그인();
+
+        ProductRequest 티 = new ProductRequest(
+                "컬러 티셔츠",
+                25000,
+                "다양한 색상의 티셔츠입니다.",
+                Category.TOP,
+                Condition.New,
+                List.of(new ProductOptionRequest("빨강", "240",10),
+                        new ProductOptionRequest("파랑", "240",15),
+                        new ProductOptionRequest("검정", "240",20)));
+
+        ProductRequest 신발 = new ProductRequest(
                 "신발",
                 25000,
                 "편안한신발.",
                 Category.SHOES,
                 Condition.New,
                 List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
-        );
+                        new ProductOptionRequest("빨강", "240",10),
+                        new ProductOptionRequest("파랑", "240",15),
+                        new ProductOptionRequest("검정", "240",20)));
 
-        ProductCreateRequest 옷 = new ProductCreateRequest(
+        ProductRequest 옷 = new ProductRequest(
                 "이쁜 옷",
                 25000,
                 "여기저기 이쁜 옷.",
                 Category.TOP,
                 Condition.New,
                 List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
-        );
+                        new ProductOptionRequest("빨강", "240",10),
+                        new ProductOptionRequest("파랑", "240",15),
+                        new ProductOptionRequest("검정", "240",20)));
 
-        ProductCreateResponse 상품1 = 상품_생성(로그인.token(), 티);
-        ProductCreateResponse 상품2 = 상품_생성(로그인.token(), 신발);
-        ProductCreateResponse 상품3 = 상품_생성(로그인.token(), 옷);
+        ProductResponse 상품1 = 상품_생성(로그인.token(), 티);
+        ProductResponse 상품2 = 상품_생성(로그인.token(), 신발);
+        ProductResponse 상품3 = 상품_생성(로그인.token(), 옷);
 
         List<ProductListResponse> 상품들 = RestAssured
                 .given().log().all()
@@ -491,32 +367,26 @@ public class ProductTest {
         AdminCreateResponse 관리자 = 관리자_생성();
         AdminLoginResponse 로그인 = 관리자_로그인();
 
-        ProductCreateRequest 티 = new ProductCreateRequest(
+        ProductRequest 티 = new ProductRequest(
                 "컬러 티셔츠",
                 25000,
                 "다양한 색상의 티셔츠입니다.",
                 Category.TOP,
                 Condition.New,
                 List.of(
-                        new OptionGroup("색상",  List.of(
-                                new OptionValue("빨강", 10),
-                                new OptionValue("파랑", 15),
-                                new OptionValue("검정", 20)
-                        ), null)
-                )
-        );
-        ProductCreateResponse 상품1 = 상품_생성(로그인.token(), 티);
+                        new ProductOptionRequest("빨강", "240",10),
+                        new ProductOptionRequest("파랑", "240",15),
+                        new ProductOptionRequest("검정", "240",20)));
+        ProductResponse 상품1 = 상품_생성(로그인.token(), 티);
 
-        ProductCreateResponse 특정상품 = RestAssured
+        ProductResponse 특정상품 = RestAssured
                 .given().log().all()
-                .pathParam("productId", 상품1.id())
+                .pathParam("productId", 상품1.productId())
                 .when()
                 .get("/products/{productId}")
                 .then().log().all()
                 .statusCode(200)
                 .extract()
-                .as(ProductCreateResponse.class);
-
-
+                .as(ProductResponse.class);
     }
 }
