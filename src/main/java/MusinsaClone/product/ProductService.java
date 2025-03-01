@@ -145,8 +145,9 @@ public class ProductService {
     }
 
     public ProductResponse findById(Long productId) {
-        Product product = productRepository.findById(productId)
+        Product product = productQueryRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품이 없습니다."));
+
 
         List<ProductOptionResponse> optionResponses = convertRequestToResponse(product);
 
