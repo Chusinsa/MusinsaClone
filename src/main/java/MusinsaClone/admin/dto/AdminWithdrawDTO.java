@@ -1,4 +1,4 @@
-package MusinsaClone.admin.DTO;
+package MusinsaClone.admin.dto;
 
 public record AdminWithdrawDTO(String password) {
 }

@@ -1,6 +1,6 @@
 package MusinsaClone.admin;
 
-import MusinsaClone.admin.DTO.*;
+import MusinsaClone.admin.dto.*;
 import MusinsaClone.util.JwtProvider;
 import MusinsaClone.util.SecurityUtils;
 import jakarta.transaction.Transactional;
