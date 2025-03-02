@@ -1,5 +1,6 @@
 package MusinsaClone.order;
 
+import MusinsaClone.customers.Customer;
 import MusinsaClone.util.BaseEntity;
 import jakarta.persistence.*;
 
@@ -22,6 +23,9 @@ public class Order extends BaseEntity {
         this.address = address;
     }
 
+    protected Order() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -36,5 +40,9 @@ public class Order extends BaseEntity {
 
     public int getTotalPrice() {
         return totalPrice;
+    }
+
+    public void updateTotalPrice(int totalPrice) {
+        this.totalPrice = this.totalPrice + totalPrice;
     }
 }
