@@ -28,6 +28,8 @@ public class OrderService {
     }
 
     public OrderResponse create(CreateOrderRequest createOrderRequest, Customer customer) {
+        customerRepository.findById(customer.getId()).orElseThrow(
+                () -> new NoSuchElementException("해당하는 고객이 없습니다."));
         Order order = new Order(customer, createOrderRequest.address());
         orderRepository.save(order);
         return new OrderResponse(
@@ -38,26 +40,32 @@ public class OrderService {
     }
 
     public OrderListResponse getAll(Customer customer) {
+        customerRepository.findById(customer.getId()).orElseThrow(
+                () -> new NoSuchElementException("해당하는 고객이 없습니다."));
         List<Order> orders = orderRepository.findByCustomer(customer);
         return new OrderListResponse(
                 orders.stream()
-                        .map(order -> new OrderListResponse.OrderInfo(order.getId(), order.getCustomer().getName))
+                        .map(order -> new OrderListResponse.OrderInfo(order.getId(), order.getCustomer().getUsername()))
                         .toList()
         );
     }
 
-    public OrderViewResponse getDetail(Long orderId) {
+    public OrderViewResponse getDetail(Long orderId, Customer customer) {
+        customerRepository.findById(customer.getId()).orElseThrow(
+                () -> new NoSuchElementException("해당하는 고객이 없습니다."));
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new NoSuchElementException("해당하는 주문이 없습니다."));
         return new OrderViewResponse(
                 order.getId(),
-                order.getCustomer().getId,
+                order.getCustomer().getId(),
                 order.getAddress(),
                 order.getTotalPrice());
     }
 
     @Transactional
-    public void delete(Long orderId) {
+    public void delete(Long orderId, Customer customer) {
+        customerRepository.findById(customer.getId()).orElseThrow(
+                () -> new NoSuchElementException("해당하는 고객이 없습니다."));
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Id(orderId);
         for (OrderDetail orderDetail : orderDetails) {
             orderDetailRepository.delete(orderDetail);

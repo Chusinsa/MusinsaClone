@@ -1,6 +1,7 @@
 package MusinsaClone.orderDetail;
 
 import MusinsaClone.order.Order;
+import MusinsaClone.product.Product;
 import jakarta.persistence.*;
 
 @Entity

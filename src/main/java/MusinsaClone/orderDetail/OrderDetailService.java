@@ -4,6 +4,8 @@ import MusinsaClone.order.DTO.CreateOrderRequest;
 import MusinsaClone.order.Order;
 import MusinsaClone.order.OrderRepository;
 import MusinsaClone.orderDetail.DTO.*;
+import MusinsaClone.product.Product;
+import MusinsaClone.product.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,7 @@ public class OrderDetailService {
     public CreateOrderDetailResponse create(CreateOrderDetailRequest createOrderDetailRequest) {
         Order order = orderRepository.findById(createOrderDetailRequest.orderId()).orElseThrow(
                 () -> new NoSuchElementException("해당하는 주문이 없습니다."));
-        Product product = productRepository.findById(createOrderDetailRequest.productId).orElseThrow(
+        Product product = productRepository.findById(createOrderDetailRequest.productId()).orElseThrow(
                 () -> new NoSuchElementException("해당하는 상품이 없습니다."));
         OrderDetail orderDetail = orderDetailRepository.save(
                 new OrderDetail(
@@ -38,7 +40,7 @@ public class OrderDetailService {
                         createOrderDetailRequest.productCount(),
                         createOrderDetailRequest.price()));
         order.updateTotalPrice(createOrderDetailRequest.price() * createOrderDetailRequest.productCount());
-        return new CreateOrderDetailResponse(orderDetail.getId(), orderDetail.getProduct().getId);
+        return new CreateOrderDetailResponse(orderDetail.getId(), orderDetail.getProduct().getId());
     }
 
     public OrderDetailListResponse getAll(Long orderId) {
@@ -49,7 +51,7 @@ public class OrderDetailService {
                         .stream()
                         .map(orderDetail -> new OrderDetailResponse(
                                 orderDetail.getId(),
-                                orderDetail.getProduct().getId))
+                                orderDetail.getProduct().getId()))
                         .toList()
         );
     }
@@ -60,7 +62,7 @@ public class OrderDetailService {
         return new OrderDetailviewResponse(
                 orderDetail.getId(),
                 orderDetail.getOrder().getId(),
-                orderDetail.getProduct().getId,
+                orderDetail.getProduct().getId(),
                 orderDetail.getProductCount(),
                 orderDetail.getPrice());
     }
