@@ -37,7 +37,7 @@ public class Customer {
     @Column(nullable = false)
     private String address;
 
-    private Customer() {
+    protected Customer() {
     }
 
     public Customer(String username,String loginId, String password, String nickname, String email, String phone, String birthdate, String address) {
@@ -88,23 +88,23 @@ public class Customer {
         return address;
     }
 
-    public Customer updateWith(CustomerRequest request) {
-        return new Customer(
-                isNotEmpty(request.username()) ? request.username() : this.username,
-                isNotEmpty(request.loginId()) ? request.loginId() : this.loginId,
-                isNotEmpty(request.password()) ? request.password() : this.password,
-                isNotEmpty(request.nickname()) ? request.nickname() : this.nickname,
-                isNotEmpty(request.email()) ? request.email() : this.email,
-                isNotEmpty(request.phone()) ? request.phone() : this.phone,
-                isNotEmpty(request.birthdate()) ? request.birthdate() : this.birthdate,
-                isNotEmpty(request.address()) ? request.address() : this.address
-        );
+    public void updateWith(
+            String nickname,
+            String email,
+            String phone,
+            String birthdate,
+            String address)
+    {
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+        this.email = email;
+        this. phone = phone;
+        this. birthdate = birthdate;
+        this. address = address;
     }
 
-    // 유효성 검사 메서드
-    private boolean isNotEmpty(String value) {
-        return value != null && !value.trim().isEmpty();
-    }
+
 
 
 
