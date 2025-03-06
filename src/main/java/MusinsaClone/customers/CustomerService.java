@@ -1,5 +1,6 @@
 package MusinsaClone.customers;
 
+import MusinsaClone.util.JwtProvider;
 import MusinsaClone.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerService {
     public final CustomerRepository customerRepository;
+    public final JwtProvider jwtProvider;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, JwtProvider jwtProvider) {
         this.customerRepository = customerRepository;
+        this.jwtProvider = jwtProvider;
     }
 
     //회원가입
@@ -29,7 +32,7 @@ public class CustomerService {
     }
 
     //로그인
-    public CustomerResponse login(@Valid CustomerRequest request) {
+    public CustomerResponse login(@Valid CustomerLoginRequest request) {
         String encryptedPassword = SecurityUtils.sha256EncryptHex2(request.password());
 
         Customer customer = customerRepository.findByLoginId(request.loginId());
@@ -42,30 +45,23 @@ public class CustomerService {
             throw new RuntimeException("Invalid password");
         }
 
-        return new CustomerResponse(customer.getLoginId());
+        return new CustomerResponse(customer.getLoginId(),jwtProvider.createToken(request.loginId()));
     }
 
     @Transactional
-    public CustomerResponse update(Customer customer, @Valid CustomerRequest request) {
+    public void update(Customer customer, @Valid CustomerUpdate request) {
+        customer.updateWith(
+                request.nickname(),
+                request.email(),
+                request.phone(),
+                request.birthdate(),
+                request.address()
+                );
 
-        Customer existingCustomer = customerRepository.findById(customer.getId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-
-
-        Customer updatedCustomer = existingCustomer.updateWith(request);
-
-
-        customerRepository.save(updatedCustomer);
-
-
-        return new CustomerResponse(updatedCustomer.getLoginId());
     }
 
     @Transactional
     public void deleteCustomer(Customer customer) {
-        Customer existingCustomer = customerRepository.findById(customer.getId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-
-        customerRepository.delete(existingCustomer);
+        customerRepository.delete(customer);
     }
 }

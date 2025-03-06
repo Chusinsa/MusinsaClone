@@ -1,6 +1,6 @@
 package MusinsaClone.customers;
 
-public record CustomerResponse(String loginId
+public record CustomerResponse(String loginId,String token
 ) {
 
 }
